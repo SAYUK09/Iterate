@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import "./App.css";
+import { fetchProducts, generateImage } from "./util";
 
 interface Product {
   id: number;
@@ -30,48 +31,20 @@ function App(): JSX.Element {
   };
 
   const handleSearch = debounce(async (searchQuery: string) => {
-    fetch("http://localhost:5000/generate-image", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt: searchQuery }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setImgURL(data.image_url);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    try {
+      const imgURL = await generateImage(searchQuery);
+      setImgURL(imgURL);
 
-    fetch("http://localhost:5000/relevant-products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ product_idea: searchQuery }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Handle the response data
-        console.log(data);
-        if (data.products.length) {
-          setProducts(data.products);
-        } else {
-          setMessage(data.message);
-        }
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error("There was a problem with the fetch operation:", error);
-      });
+      const { products, message } = await fetchProducts(searchQuery);
+
+      if (products.length) {
+        setProducts(products);
+      } else {
+        setMessage(message);
+      }
+    } catch (error) {
+      console.error("There was a problem with the search operation:", error);
+    }
   });
 
   return (
