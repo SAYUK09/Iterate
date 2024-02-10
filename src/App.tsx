@@ -19,7 +19,7 @@ function App(): JSX.Element {
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSearch = useDebounce(async (searchQuery: string) => {
+  const handleSearch = useDebounce(async (searchQuery) => {
     try {
       setLoading(true);
       const imgURL = await generateImage(searchQuery);
