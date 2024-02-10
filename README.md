@@ -37,3 +37,6 @@ To run this project locally, follow these steps:
 - Frontend: React+Vite
 - Icon Generation: OpenAI API
 - Product Suggestions: Mock database
+
+# Other Links
+- [Iterate Backend](https://github.com/SAYUK09/Iterate-Backend)
