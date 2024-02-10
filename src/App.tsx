@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { fetchProducts, generateImage } from "./util";
 import bulb from "./assets/bulb.svg";
 import Loader from "./components/Loader";
+import { useDebounce } from "./hooks/debounce";
 
 interface Product {
   id: number;
@@ -18,21 +19,7 @@ function App(): JSX.Element {
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const debounce = <T extends (...args: any[]) => any>(
-    fn: T,
-    delay: number = 1000
-  ) => {
-    let timeoutId: number;
-    console.log(delay, "ddee");
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        fn(...args);
-      }, delay);
-    };
-  };
-
-  const handleSearch = debounce(async (searchQuery: string) => {
+  const handleSearch = useDebounce(async (searchQuery: string) => {
     try {
       setLoading(true);
       const imgURL = await generateImage(searchQuery);
